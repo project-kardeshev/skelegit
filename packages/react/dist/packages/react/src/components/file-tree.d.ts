@@ -9,4 +9,4 @@ export interface FileTreeProps {
     onFileSelect?: (file: GitFile) => void;
     className?: string;
 }
-export declare function FileTree({ owner, repo, path, ref, clientName, onFileSelect, className }: FileTreeProps): import("react/jsx-runtime").JSX.Element;
+export declare function FileTree({ owner, repo, path, ref, clientName, onFileSelect, className, }: FileTreeProps): import("react/jsx-runtime").JSX.Element;

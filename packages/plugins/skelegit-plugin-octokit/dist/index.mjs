@@ -1,65 +1,103 @@
-import { Effect as d } from "effect";
+import { Effect as o } from "effect";
 import { Octokit as f } from "@octokit/rest";
-class _ {
-  constructor(r) {
-    var i;
-    this.octokit = new f({
-      auth: (i = r.auth) == null ? void 0 : i.token,
-      baseUrl: r.baseUrl,
-      ...r.options
-    });
+import { GitHubAuthProvider as _ } from "@skelegit/core";
+function b(u, a) {
+  return o.tryPromise({
+    try: async () => {
+      var s, n;
+      if (!a)
+        return new f({
+          auth: ((s = u.auth) == null ? void 0 : s.token) || ((n = u.auth) == null ? void 0 : n.password),
+          baseUrl: u.baseUrl,
+          ...u.options
+        });
+      const i = new _();
+      await o.runPromise(a.registerProvider(i));
+      let r = {};
+      if (u.authCredentialId)
+        r = await o.runPromise(
+          a.getAuthHeaders(u.authCredentialId)
+        );
+      else if (u.auth) {
+        const l = await o.runPromise(
+          a.createCredentials("github", u.auth)
+        );
+        r = await o.runPromise(
+          a.getAuthHeaders(l)
+        );
+      }
+      const t = r.Authorization;
+      let e;
+      return t && (t.startsWith("token ") ? e = t.substring(6) : t.startsWith("Bearer ") ? e = t.substring(7) : t.startsWith("Basic ") && (e = t)), new f({
+        auth: e,
+        baseUrl: u.baseUrl || "https://api.github.com",
+        ...u.options
+      });
+    },
+    catch: (i) => new Error(`Failed to create authenticated Octokit: ${i}`)
+  });
+}
+class g {
+  constructor(a) {
+    this.octokit = a;
   }
-  getRepository(r, i) {
-    return d.tryPromise({
+  static create(a, i) {
+    return o.map(
+      b(a, i),
+      (r) => new g(r)
+    );
+  }
+  getRepository(a, i) {
+    return o.tryPromise({
       try: async () => {
-        const { data: a } = await this.octokit.rest.repos.get({
-          owner: r,
+        const { data: r } = await this.octokit.rest.repos.get({
+          owner: a,
           repo: i
         });
         return {
-          id: a.id.toString(),
-          name: a.name,
-          fullName: a.full_name,
-          description: a.description || void 0,
-          defaultBranch: a.default_branch,
-          isPrivate: a.private,
-          url: a.html_url,
-          cloneUrl: a.clone_url,
-          createdAt: new Date(a.created_at),
-          updatedAt: new Date(a.updated_at)
+          id: r.id.toString(),
+          name: r.name,
+          fullName: r.full_name,
+          description: r.description || void 0,
+          defaultBranch: r.default_branch,
+          isPrivate: r.private,
+          url: r.html_url,
+          cloneUrl: r.clone_url,
+          createdAt: new Date(r.created_at),
+          updatedAt: new Date(r.updated_at)
         };
       },
-      catch: (a) => new Error(`Failed to get repository: ${a}`)
+      catch: (r) => new Error(`Failed to get repository: ${r}`)
     });
   }
-  listRepositories(r) {
-    return d.tryPromise({
+  listRepositories(a) {
+    return o.tryPromise({
       try: async () => {
-        const { data: i } = r ? await this.octokit.rest.repos.listForUser({ username: r }) : await this.octokit.rest.repos.listForAuthenticatedUser();
-        return i.map((a) => ({
-          id: a.id.toString(),
-          name: a.name,
-          fullName: a.full_name,
-          description: a.description || void 0,
-          defaultBranch: a.default_branch || "main",
-          isPrivate: a.private,
-          url: a.html_url,
-          cloneUrl: a.clone_url || "",
-          createdAt: new Date(a.created_at || ""),
-          updatedAt: new Date(a.updated_at || "")
+        const { data: i } = a ? await this.octokit.rest.repos.listForUser({ username: a }) : await this.octokit.rest.repos.listForAuthenticatedUser();
+        return i.map((r) => ({
+          id: r.id.toString(),
+          name: r.name,
+          fullName: r.full_name,
+          description: r.description || void 0,
+          defaultBranch: r.default_branch || "main",
+          isPrivate: r.private,
+          url: r.html_url,
+          cloneUrl: r.clone_url || "",
+          createdAt: new Date(r.created_at || ""),
+          updatedAt: new Date(r.updated_at || "")
         }));
       },
       catch: (i) => new Error(`Failed to list repositories: ${i}`)
     });
   }
-  getPullRequest(r, i, a) {
-    return d.tryPromise({
+  getPullRequest(a, i, r) {
+    return o.tryPromise({
       try: async () => {
-        var e, o, s, n, l;
+        var e, s, n, l, d;
         const { data: t } = await this.octokit.rest.pulls.get({
-          owner: r,
+          owner: a,
           repo: i,
-          pull_number: a
+          pull_number: r
         });
         return {
           id: t.id.toString(),
@@ -71,10 +109,10 @@ class _ {
           targetBranch: t.base.ref,
           author: {
             id: ((e = t.user) == null ? void 0 : e.id.toString()) || "",
-            username: ((o = t.user) == null ? void 0 : o.login) || "",
-            displayName: ((s = t.user) == null ? void 0 : s.name) || void 0,
-            email: ((n = t.user) == null ? void 0 : n.email) || void 0,
-            avatarUrl: ((l = t.user) == null ? void 0 : l.avatar_url) || void 0
+            username: ((s = t.user) == null ? void 0 : s.login) || "",
+            displayName: ((n = t.user) == null ? void 0 : n.name) || void 0,
+            email: ((l = t.user) == null ? void 0 : l.email) || void 0,
+            avatarUrl: ((d = t.user) == null ? void 0 : d.avatar_url) || void 0
           },
           createdAt: new Date(t.created_at),
           updatedAt: new Date(t.updated_at),
@@ -84,16 +122,16 @@ class _ {
       catch: (t) => new Error(`Failed to get pull request: ${t}`)
     });
   }
-  listPullRequests(r, i, a = "open") {
-    return d.tryPromise({
+  listPullRequests(a, i, r = "open") {
+    return o.tryPromise({
       try: async () => {
         const { data: t } = await this.octokit.rest.pulls.list({
-          owner: r,
+          owner: a,
           repo: i,
-          state: a
+          state: r
         });
         return t.map((e) => {
-          var o, s, n, l, c;
+          var s, n, l, d, c;
           return {
             id: e.id.toString(),
             number: e.number,
@@ -103,10 +141,10 @@ class _ {
             sourceBranch: e.head.ref,
             targetBranch: e.base.ref,
             author: {
-              id: ((o = e.user) == null ? void 0 : o.id.toString()) || "",
-              username: ((s = e.user) == null ? void 0 : s.login) || "",
-              displayName: ((n = e.user) == null ? void 0 : n.name) || void 0,
-              email: ((l = e.user) == null ? void 0 : l.email) || void 0,
+              id: ((s = e.user) == null ? void 0 : s.id.toString()) || "",
+              username: ((n = e.user) == null ? void 0 : n.login) || "",
+              displayName: ((l = e.user) == null ? void 0 : l.name) || void 0,
+              email: ((d = e.user) == null ? void 0 : d.email) || void 0,
               avatarUrl: ((c = e.user) == null ? void 0 : c.avatar_url) || void 0
             },
             createdAt: new Date(e.created_at),
@@ -118,13 +156,13 @@ class _ {
       catch: (t) => new Error(`Failed to list pull requests: ${t}`)
     });
   }
-  getFile(r, i, a, t) {
-    return d.tryPromise({
+  getFile(a, i, r, t) {
+    return o.tryPromise({
       try: async () => {
         const { data: e } = await this.octokit.rest.repos.getContent({
-          owner: r,
+          owner: a,
           repo: i,
-          path: a,
+          path: r,
           ref: t
         });
         if (Array.isArray(e))
@@ -143,39 +181,39 @@ class _ {
       catch: (e) => new Error(`Failed to get file: ${e}`)
     });
   }
-  listFiles(r, i, a = "", t) {
-    return d.tryPromise({
+  listFiles(a, i, r = "", t) {
+    return o.tryPromise({
       try: async () => {
         const { data: e } = await this.octokit.rest.repos.getContent({
-          owner: r,
+          owner: a,
           repo: i,
-          path: a,
+          path: r,
           ref: t
         });
-        return Array.isArray(e) ? e.map((o) => ({
-          path: o.path,
-          name: o.name,
-          type: o.type === "dir" ? "directory" : "file",
-          size: o.size,
-          sha: o.sha
-        })) : [e].map((o) => ({
-          path: o.path,
-          name: o.name,
-          type: o.type === "dir" ? "directory" : "file",
-          size: o.size,
-          sha: o.sha
+        return Array.isArray(e) ? e.map((s) => ({
+          path: s.path,
+          name: s.name,
+          type: s.type === "dir" ? "directory" : "file",
+          size: s.size,
+          sha: s.sha
+        })) : [e].map((s) => ({
+          path: s.path,
+          name: s.name,
+          type: s.type === "dir" ? "directory" : "file",
+          size: s.size,
+          sha: s.sha
         }));
       },
       catch: (e) => new Error(`Failed to list files: ${e}`)
     });
   }
-  getBranch(r, i, a) {
-    return d.tryPromise({
+  getBranch(a, i, r) {
+    return o.tryPromise({
       try: async () => {
         const { data: t } = await this.octokit.rest.repos.getBranch({
-          owner: r,
+          owner: a,
           repo: i,
-          branch: a
+          branch: r
         });
         return {
           name: t.name,
@@ -188,14 +226,14 @@ class _ {
       catch: (t) => new Error(`Failed to get branch: ${t}`)
     });
   }
-  listBranches(r, i) {
-    return d.tryPromise({
+  listBranches(a, i) {
+    return o.tryPromise({
       try: async () => {
-        const { data: a } = await this.octokit.rest.repos.listBranches({
-          owner: r,
+        const { data: r } = await this.octokit.rest.repos.listBranches({
+          owner: a,
           repo: i
         });
-        return a.map((t) => ({
+        return r.map((t) => ({
           name: t.name,
           sha: t.commit.sha,
           isDefault: !1,
@@ -203,73 +241,73 @@ class _ {
           isProtected: t.protected
         }));
       },
-      catch: (a) => new Error(`Failed to list branches: ${a}`)
+      catch: (r) => new Error(`Failed to list branches: ${r}`)
     });
   }
-  getCommit(r, i, a) {
-    return d.tryPromise({
+  getCommit(a, i, r) {
+    return o.tryPromise({
       try: async () => {
-        var e, o, s, n, l, c, u, m, h, y, p;
+        var e, s, n, l, d, c, m, h, y, p, w;
         const { data: t } = await this.octokit.rest.repos.getCommit({
-          owner: r,
+          owner: a,
           repo: i,
-          ref: a
+          ref: r
         });
         return {
           sha: t.sha,
           message: t.commit.message,
           author: {
             id: ((e = t.author) == null ? void 0 : e.id.toString()) || "",
-            username: ((o = t.author) == null ? void 0 : o.login) || "",
-            displayName: ((s = t.commit.author) == null ? void 0 : s.name) || void 0,
-            email: ((n = t.commit.author) == null ? void 0 : n.email) || void 0,
-            avatarUrl: ((l = t.author) == null ? void 0 : l.avatar_url) || void 0
+            username: ((s = t.author) == null ? void 0 : s.login) || "",
+            displayName: ((n = t.commit.author) == null ? void 0 : n.name) || void 0,
+            email: ((l = t.commit.author) == null ? void 0 : l.email) || void 0,
+            avatarUrl: ((d = t.author) == null ? void 0 : d.avatar_url) || void 0
           },
           committer: {
             id: ((c = t.committer) == null ? void 0 : c.id.toString()) || "",
-            username: ((u = t.committer) == null ? void 0 : u.login) || "",
-            displayName: ((m = t.commit.committer) == null ? void 0 : m.name) || void 0,
-            email: ((h = t.commit.committer) == null ? void 0 : h.email) || void 0,
-            avatarUrl: ((y = t.committer) == null ? void 0 : y.avatar_url) || void 0
+            username: ((m = t.committer) == null ? void 0 : m.login) || "",
+            displayName: ((h = t.commit.committer) == null ? void 0 : h.name) || void 0,
+            email: ((y = t.commit.committer) == null ? void 0 : y.email) || void 0,
+            avatarUrl: ((p = t.committer) == null ? void 0 : p.avatar_url) || void 0
           },
-          createdAt: new Date(((p = t.commit.author) == null ? void 0 : p.date) || ""),
+          createdAt: new Date(((w = t.commit.author) == null ? void 0 : w.date) || ""),
           url: t.html_url,
-          parents: t.parents.map((g) => g.sha)
+          parents: t.parents.map((v) => v.sha)
         };
       },
       catch: (t) => new Error(`Failed to get commit: ${t}`)
     });
   }
-  listCommits(r, i, a) {
-    return d.tryPromise({
+  listCommits(a, i, r) {
+    return o.tryPromise({
       try: async () => {
         const { data: t } = await this.octokit.rest.repos.listCommits({
-          owner: r,
+          owner: a,
           repo: i,
-          sha: a
+          sha: r
         });
         return t.map((e) => {
-          var o, s, n, l, c, u, m, h, y, p, g;
+          var s, n, l, d, c, m, h, y, p, w, v;
           return {
             sha: e.sha,
             message: e.commit.message,
             author: {
-              id: ((o = e.author) == null ? void 0 : o.id.toString()) || "",
-              username: ((s = e.author) == null ? void 0 : s.login) || "",
-              displayName: ((n = e.commit.author) == null ? void 0 : n.name) || void 0,
-              email: ((l = e.commit.author) == null ? void 0 : l.email) || void 0,
+              id: ((s = e.author) == null ? void 0 : s.id.toString()) || "",
+              username: ((n = e.author) == null ? void 0 : n.login) || "",
+              displayName: ((l = e.commit.author) == null ? void 0 : l.name) || void 0,
+              email: ((d = e.commit.author) == null ? void 0 : d.email) || void 0,
               avatarUrl: ((c = e.author) == null ? void 0 : c.avatar_url) || void 0
             },
             committer: {
-              id: ((u = e.committer) == null ? void 0 : u.id.toString()) || "",
-              username: ((m = e.committer) == null ? void 0 : m.login) || "",
-              displayName: ((h = e.commit.committer) == null ? void 0 : h.name) || void 0,
-              email: ((y = e.commit.committer) == null ? void 0 : y.email) || void 0,
-              avatarUrl: ((p = e.committer) == null ? void 0 : p.avatar_url) || void 0
+              id: ((m = e.committer) == null ? void 0 : m.id.toString()) || "",
+              username: ((h = e.committer) == null ? void 0 : h.login) || "",
+              displayName: ((y = e.commit.committer) == null ? void 0 : y.name) || void 0,
+              email: ((p = e.commit.committer) == null ? void 0 : p.email) || void 0,
+              avatarUrl: ((w = e.committer) == null ? void 0 : w.avatar_url) || void 0
             },
-            createdAt: new Date(((g = e.commit.author) == null ? void 0 : g.date) || ""),
+            createdAt: new Date(((v = e.commit.author) == null ? void 0 : v.date) || ""),
             url: e.html_url,
-            parents: e.parents.map((w) => w.sha)
+            parents: e.parents.map((P) => P.sha)
           };
         });
       },
@@ -277,12 +315,12 @@ class _ {
     });
   }
 }
-const b = {
+const E = {
   name: "octokit",
   provider: "github",
-  createClient: (v) => d.succeed(new _(v))
+  createClient: (u, a) => g.create(u, a)
 };
 export {
-  _ as OctokitClient,
-  b as octokitPlugin
+  g as OctokitClient,
+  E as octokitPlugin
 };

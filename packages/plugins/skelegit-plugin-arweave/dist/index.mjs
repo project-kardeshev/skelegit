@@ -10,40 +10,60 @@ class i {
     });
   }
   getRepository(e, o) {
-    return r.fail(new Error("Not implemented - Arweave plugin is a placeholder"));
+    return r.fail(
+      new Error("Not implemented - Arweave plugin is a placeholder")
+    );
   }
   listRepositories(e) {
-    return r.fail(new Error("Not implemented - Arweave plugin is a placeholder"));
+    return r.fail(
+      new Error("Not implemented - Arweave plugin is a placeholder")
+    );
   }
   getPullRequest(e, o, t) {
-    return r.fail(new Error("Not implemented - Arweave plugin is a placeholder"));
+    return r.fail(
+      new Error("Not implemented - Arweave plugin is a placeholder")
+    );
   }
   listPullRequests(e, o, t) {
-    return r.fail(new Error("Not implemented - Arweave plugin is a placeholder"));
+    return r.fail(
+      new Error("Not implemented - Arweave plugin is a placeholder")
+    );
   }
   getFile(e, o, t, a) {
-    return r.fail(new Error("Not implemented - Arweave plugin is a placeholder"));
+    return r.fail(
+      new Error("Not implemented - Arweave plugin is a placeholder")
+    );
   }
   listFiles(e, o, t, a) {
-    return r.fail(new Error("Not implemented - Arweave plugin is a placeholder"));
+    return r.fail(
+      new Error("Not implemented - Arweave plugin is a placeholder")
+    );
   }
   getBranch(e, o, t) {
-    return r.fail(new Error("Not implemented - Arweave plugin is a placeholder"));
+    return r.fail(
+      new Error("Not implemented - Arweave plugin is a placeholder")
+    );
   }
   listBranches(e, o) {
-    return r.fail(new Error("Not implemented - Arweave plugin is a placeholder"));
+    return r.fail(
+      new Error("Not implemented - Arweave plugin is a placeholder")
+    );
   }
   getCommit(e, o, t) {
-    return r.fail(new Error("Not implemented - Arweave plugin is a placeholder"));
+    return r.fail(
+      new Error("Not implemented - Arweave plugin is a placeholder")
+    );
   }
   listCommits(e, o, t) {
-    return r.fail(new Error("Not implemented - Arweave plugin is a placeholder"));
+    return r.fail(
+      new Error("Not implemented - Arweave plugin is a placeholder")
+    );
   }
 }
 const s = {
   name: "arweave",
   provider: "arweave",
-  createClient: (l) => r.succeed(new i(l))
+  createClient: (l, e) => r.succeed(new i(l))
 };
 export {
   i as ArweaveClient,

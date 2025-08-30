@@ -1,9 +1,11 @@
 import { Effect } from 'effect';
-import { GitClientPlugin, GitClientConfig, GitClient, Repository, PullRequest, GitFile, Branch, Commit } from '../../../core/src/index.ts';
+import { Octokit } from '@octokit/rest';
+import { GitClientPlugin, GitClientConfig, GitClient, Repository, PullRequest, GitFile, Branch, Commit, AuthManager } from '../../../core/src/index.ts';
 
 export declare class OctokitClient implements GitClient {
     private octokit;
-    constructor(config: GitClientConfig);
+    constructor(octokit: Octokit);
+    static create(config: GitClientConfig, authManager?: AuthManager): Effect.Effect<OctokitClient, Error>;
     getRepository(owner: string, repo: string): Effect.Effect<Repository, Error>;
     listRepositories(owner?: string): Effect.Effect<Repository[], Error>;
     getPullRequest(owner: string, repo: string, number: number): Effect.Effect<PullRequest, Error>;

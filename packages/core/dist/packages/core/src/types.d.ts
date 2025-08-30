@@ -58,17 +58,14 @@ export interface Commit {
 export interface GitClientConfig {
     provider: string;
     baseUrl?: string;
-    auth?: {
-        token?: string;
-        username?: string;
-        password?: string;
-    };
-    options?: Record<string, any>;
+    authCredentialId?: string;
+    auth?: Record<string, unknown>;
+    options?: Record<string, unknown>;
 }
 export interface GitClientPlugin {
     name: string;
     provider: string;
-    createClient: (config: GitClientConfig) => Effect.Effect<GitClient, Error>;
+    createClient: (config: GitClientConfig, authManager?: import('./auth').AuthManager) => Effect.Effect<GitClient, Error>;
 }
 export interface GitClient {
     getRepository: (owner: string, repo: string) => Effect.Effect<Repository, Error>;

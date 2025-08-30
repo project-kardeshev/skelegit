@@ -6,4 +6,4 @@ export interface BranchSelectorProps {
     onBranchChange?: (branch: string) => void;
     className?: string;
 }
-export declare function BranchSelector({ owner, repo, currentBranch, clientName, onBranchChange, className }: BranchSelectorProps): import("react/jsx-runtime").JSX.Element;
+export declare function BranchSelector({ owner, repo, currentBranch, clientName, onBranchChange, className, }: BranchSelectorProps): import("react/jsx-runtime").JSX.Element;

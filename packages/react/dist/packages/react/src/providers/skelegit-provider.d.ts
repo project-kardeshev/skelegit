@@ -11,6 +11,6 @@ export interface SkelegitProviderProps {
     clients: Record<string, GitClient>;
     defaultClient?: string;
 }
-export declare function SkelegitProvider({ children, clients, defaultClient }: SkelegitProviderProps): import("react/jsx-runtime").JSX.Element;
+export declare function SkelegitProvider({ children, clients, defaultClient, }: SkelegitProviderProps): import("react/jsx-runtime").JSX.Element;
 export declare function useSkelegit(): SkelegitContextValue;
 export {};

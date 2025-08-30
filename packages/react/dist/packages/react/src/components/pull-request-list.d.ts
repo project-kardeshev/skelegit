@@ -8,4 +8,4 @@ export interface PullRequestListProps {
     onPullRequestSelect?: (pullRequest: PullRequest) => void;
     className?: string;
 }
-export declare function PullRequestList({ owner, repo, state, clientName, onPullRequestSelect, className }: PullRequestListProps): import("react/jsx-runtime").JSX.Element;
+export declare function PullRequestList({ owner, repo, state, clientName, onPullRequestSelect, className, }: PullRequestListProps): import("react/jsx-runtime").JSX.Element;

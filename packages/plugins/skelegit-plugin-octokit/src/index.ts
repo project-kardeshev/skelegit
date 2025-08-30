@@ -9,17 +9,25 @@ import {
   GitFile,
   Branch,
   Commit,
+  AuthManager,
 } from '@skelegit/core';
+import { createAuthenticatedOctokit } from './auth-integration';
 
 export class OctokitClient implements GitClient {
   private octokit: Octokit;
 
-  constructor(config: GitClientConfig) {
-    this.octokit = new Octokit({
-      auth: config.auth?.token,
-      baseUrl: config.baseUrl,
-      ...config.options,
-    });
+  constructor(octokit: Octokit) {
+    this.octokit = octokit;
+  }
+
+  static create(
+    config: GitClientConfig,
+    authManager?: AuthManager
+  ): Effect.Effect<OctokitClient, Error> {
+    return Effect.map(
+      createAuthenticatedOctokit(config, authManager),
+      (octokit) => new OctokitClient(octokit)
+    );
   }
 
   getRepository(owner: string, repo: string): Effect.Effect<Repository, Error> {
@@ -351,6 +359,6 @@ export class OctokitClient implements GitClient {
 export const octokitPlugin: GitClientPlugin = {
   name: 'octokit',
   provider: 'github',
-  createClient: (config: GitClientConfig) =>
-    Effect.succeed(new OctokitClient(config)),
+  createClient: (config: GitClientConfig, authManager?: AuthManager) =>
+    OctokitClient.create(config, authManager),
 };

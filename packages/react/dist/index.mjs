@@ -626,7 +626,9 @@ React keys must be passed directly to JSX without using spread:
 }
 process.env.NODE_ENV === "production" ? te.exports = mr() : te.exports = br();
 var f = te.exports;
-const ke = gr(void 0);
+const ke = gr(
+  void 0
+);
 function Tr({
   children: l,
   clients: o,
@@ -746,7 +748,12 @@ function wr({
   onPullRequestSelect: m,
   className: p = ""
 }) {
-  const { pullRequests: g, loading: i, error: s } = yr(l, o, c, h);
+  const { pullRequests: g, loading: i, error: s } = yr(
+    l,
+    o,
+    c,
+    h
+  );
   return i ? /* @__PURE__ */ f.jsx("div", { className: `p-4 ${p}`, children: "Loading pull requests..." }) : s ? /* @__PURE__ */ f.jsxs("div", { className: `p-4 text-red-600 ${p}`, children: [
     "Error loading pull requests: ",
     s.message
@@ -763,7 +770,13 @@ function wr({
             " ",
             n.title
           ] }),
-          /* @__PURE__ */ f.jsx("span", { className: `px-2 py-1 rounded text-sm ${n.state === "open" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`, children: n.state })
+          /* @__PURE__ */ f.jsx(
+            "span",
+            {
+              className: `px-2 py-1 rounded text-sm ${n.state === "open" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`,
+              children: n.state
+            }
+          )
         ] }),
         n.description && /* @__PURE__ */ f.jsx("p", { className: "text-gray-600 mt-1", children: n.description }),
         /* @__PURE__ */ f.jsxs("div", { className: "flex items-center gap-4 mt-2 text-sm text-gray-500", children: [
@@ -812,7 +825,13 @@ function Sr({
   onFileSelect: p,
   className: g = ""
 }) {
-  const { files: i, loading: s, error: n } = xr(l, o, c, h, m);
+  const { files: i, loading: s, error: n } = xr(
+    l,
+    o,
+    c,
+    h,
+    m
+  );
   return s ? /* @__PURE__ */ f.jsx("div", { className: `p-4 ${g}`, children: "Loading files..." }) : n ? /* @__PURE__ */ f.jsxs("div", { className: `p-4 text-red-600 ${g}`, children: [
     "Error loading files: ",
     n.message

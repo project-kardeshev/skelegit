@@ -64,38 +64,71 @@ export interface Commit {
 export interface GitClientConfig {
   provider: string;
   baseUrl?: string;
-  auth?: {
-    token?: string;
-    username?: string;
-    password?: string;
-  };
-  options?: Record<string, any>;
+  authCredentialId?: string; // Reference to stored credentials
+  auth?: Record<string, unknown>; // Direct auth config (will be converted to credentials)
+  options?: Record<string, unknown>;
 }
 
 export interface GitClientPlugin {
   name: string;
   provider: string;
-  createClient: (config: GitClientConfig) => Effect.Effect<GitClient, Error>;
+  createClient: (
+    config: GitClientConfig,
+    authManager?: import('./auth').AuthManager
+  ) => Effect.Effect<GitClient, Error>;
 }
 
 export interface GitClient {
   // Repository operations
-  getRepository: (owner: string, repo: string) => Effect.Effect<Repository, Error>;
+  getRepository: (
+    owner: string,
+    repo: string
+  ) => Effect.Effect<Repository, Error>;
   listRepositories: (owner?: string) => Effect.Effect<Repository[], Error>;
-  
+
   // Pull Request operations
-  getPullRequest: (owner: string, repo: string, number: number) => Effect.Effect<PullRequest, Error>;
-  listPullRequests: (owner: string, repo: string, state?: 'open' | 'closed' | 'all') => Effect.Effect<PullRequest[], Error>;
-  
+  getPullRequest: (
+    owner: string,
+    repo: string,
+    number: number
+  ) => Effect.Effect<PullRequest, Error>;
+  listPullRequests: (
+    owner: string,
+    repo: string,
+    state?: 'open' | 'closed' | 'all'
+  ) => Effect.Effect<PullRequest[], Error>;
+
   // File operations
-  getFile: (owner: string, repo: string, path: string, ref?: string) => Effect.Effect<GitFile, Error>;
-  listFiles: (owner: string, repo: string, path?: string, ref?: string) => Effect.Effect<GitFile[], Error>;
-  
+  getFile: (
+    owner: string,
+    repo: string,
+    path: string,
+    ref?: string
+  ) => Effect.Effect<GitFile, Error>;
+  listFiles: (
+    owner: string,
+    repo: string,
+    path?: string,
+    ref?: string
+  ) => Effect.Effect<GitFile[], Error>;
+
   // Branch operations
-  getBranch: (owner: string, repo: string, branch: string) => Effect.Effect<Branch, Error>;
+  getBranch: (
+    owner: string,
+    repo: string,
+    branch: string
+  ) => Effect.Effect<Branch, Error>;
   listBranches: (owner: string, repo: string) => Effect.Effect<Branch[], Error>;
-  
+
   // Commit operations
-  getCommit: (owner: string, repo: string, sha: string) => Effect.Effect<Commit, Error>;
-  listCommits: (owner: string, repo: string, ref?: string) => Effect.Effect<Commit[], Error>;
+  getCommit: (
+    owner: string,
+    repo: string,
+    sha: string
+  ) => Effect.Effect<Commit, Error>;
+  listCommits: (
+    owner: string,
+    repo: string,
+    ref?: string
+  ) => Effect.Effect<Commit[], Error>;
 }

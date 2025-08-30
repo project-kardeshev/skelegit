@@ -6,4 +6,4 @@ export interface RepositoryListProps {
     onRepositorySelect?: (repository: Repository) => void;
     className?: string;
 }
-export declare function RepositoryList({ owner, clientName, onRepositorySelect, className }: RepositoryListProps): import("react/jsx-runtime").JSX.Element;
+export declare function RepositoryList({ owner, clientName, onRepositorySelect, className, }: RepositoryListProps): import("react/jsx-runtime").JSX.Element;

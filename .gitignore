@@ -82,6 +82,10 @@ lerna-debug.log*
 ehthumbs.db
 Thumbs.db
 
+# macOS resource forks
+**/.DS_Store
+**/._*
+
 # dotenv environment variables file
 .env
 .env.local

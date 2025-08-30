@@ -1,8 +1,14 @@
 import { Effect } from 'effect';
 import { GitClientPlugin, GitClientConfig, GitClient } from './types';
+import { AuthManager } from './auth';
 
 export class PluginSystem {
   private plugins: Map<string, GitClientPlugin> = new Map();
+  private authManager: AuthManager;
+
+  constructor(authManager?: AuthManager) {
+    this.authManager = authManager || new AuthManager();
+  }
 
   registerPlugin(plugin: GitClientPlugin): Effect.Effect<void, Error> {
     return Effect.sync(() => {
@@ -21,10 +27,13 @@ export class PluginSystem {
   }
 
   createClient(config: GitClientConfig): Effect.Effect<GitClient, Error> {
-    return Effect.flatMap(
-      this.getPlugin(config.provider),
-      (plugin) => plugin.createClient(config)
+    return Effect.flatMap(this.getPlugin(config.provider), (plugin) =>
+      plugin.createClient(config, this.authManager)
     );
+  }
+
+  getAuthManager(): AuthManager {
+    return this.authManager;
   }
 
   listPlugins(): Effect.Effect<GitClientPlugin[], Error> {

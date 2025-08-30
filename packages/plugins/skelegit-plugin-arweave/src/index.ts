@@ -9,6 +9,7 @@ import {
   GitFile,
   Branch,
   Commit,
+  AuthManager,
 } from '@skelegit/core';
 
 export class ArweaveClient implements GitClient {
@@ -120,6 +121,6 @@ export class ArweaveClient implements GitClient {
 export const arweavePlugin: GitClientPlugin = {
   name: 'arweave',
   provider: 'arweave',
-  createClient: (config: GitClientConfig) =>
+  createClient: (config: GitClientConfig, authManager?: AuthManager) =>
     Effect.succeed(new ArweaveClient(config)),
 };

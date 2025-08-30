@@ -1,0 +1,16 @@
+{
+  "extends": ["../../.eslintrc.json"],
+  "ignorePatterns": [
+    "!**/*",
+    "dist/**/*",
+    "node_modules/**/*",
+    "**/._*",
+    "**/.DS_Store"
+  ],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {}
+    }
+  ]
+}
