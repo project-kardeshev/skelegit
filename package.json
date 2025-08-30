@@ -1,0 +1,51 @@
+{
+  "name": "skelegit",
+  "version": "0.1.0",
+  "description": "A toolkit for building Git interfaces and backends",
+  "private": true,
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "build": "nx run-many --target=build",
+    "dev": "nx run-many --target=dev --parallel",
+    "test": "nx run-many --target=test",
+    "test:e2e": "nx run-many --target=test:e2e",
+    "lint": "nx run-many --target=lint",
+    "lint:fix": "nx run-many --target=lint:fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "type-check": "nx run-many --target=type-check",
+    "clean": "nx reset && rm -rf node_modules && rm -rf apps/*/node_modules && rm -rf packages/*/node_modules && rm -rf cli/node_modules && rm -rf docs/node_modules"
+  },
+  "devDependencies": {
+    "@nx/devkit": "^18.0.0",
+    "@nx/eslint": "^18.0.0",
+    "@nx/eslint-plugin": "^18.0.0",
+    "@nx/js": "^18.0.0",
+    "@nx/plugin": "^18.0.0",
+    "@nx/react": "^18.0.0",
+    "@nx/vite": "^18.0.0",
+    "@nx/workspace": "^18.0.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-react": "^7.34.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "nx": "^18.0.0",
+    "prettier": "^3.2.0",
+    "typescript": "^5.4.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "packages/plugins/*",
+    "cli",
+    "docs"
+  ]
+}
