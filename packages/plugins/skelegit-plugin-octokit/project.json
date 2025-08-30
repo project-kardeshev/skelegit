@@ -1,0 +1,31 @@
+{
+  "name": "plugin-octokit",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "packages/plugins/skelegit-plugin-octokit/src",
+  "tags": ["type:lib", "scope:plugin"],
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "packages/plugins/skelegit-plugin-octokit/dist"
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.reportsDirectory}"],
+      "options": {
+        "passWithNoTests": true,
+        "reportsDirectory": "../../../coverage/packages/plugins/skelegit-plugin-octokit"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/plugins/skelegit-plugin-octokit/**/*.ts"]
+      }
+    }
+  }
+}

@@ -4,11 +4,7 @@ export default defineConfig({
   root: 'docs',
   title: 'Skelegit',
   description: 'A toolkit for building Git interfaces and backends',
-  icon: '/favicon.ico',
-  logo: {
-    light: '/logo-light.png',
-    dark: '/logo-dark.png',
-  },
+
   themeConfig: {
     nav: [
       { text: 'Guide', link: '/guide/' },

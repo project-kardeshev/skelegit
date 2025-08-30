@@ -1,0 +1,72 @@
+{
+  "name": "skelegit-framework",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/skelegit-framework/src",
+  "tags": ["type:app"],
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "apps/skelegit-framework/dist"
+      },
+      "configurations": {
+        "development": {
+          "mode": "development"
+        },
+        "production": {
+          "mode": "production"
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/vite:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "skelegit-framework:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "skelegit-framework:build:development",
+          "hmr": true
+        },
+        "production": {
+          "buildTarget": "skelegit-framework:build:production",
+          "hmr": false
+        }
+      }
+    },
+    "preview": {
+      "executor": "@nx/vite:preview-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "skelegit-framework:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "skelegit-framework:build:development"
+        },
+        "production": {
+          "buildTarget": "skelegit-framework:build:production"
+        }
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.reportsDirectory}"],
+      "options": {
+        "passWithNoTests": true,
+        "reportsDirectory": "../../coverage/apps/skelegit-framework"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/skelegit-framework/**/*.{ts,tsx,js,jsx}"]
+      }
+    }
+  }
+}

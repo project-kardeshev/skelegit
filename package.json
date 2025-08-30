@@ -23,6 +23,7 @@
   "devDependencies": {
     "@nx/devkit": "^18.0.0",
     "@nx/eslint": "^18.0.0",
+    "@nx/eslint-plugin": "^18.0.0",
     "@nx/js": "^18.0.0",
     "@nx/plugin": "^18.0.0",
     "@nx/react": "^18.0.0",

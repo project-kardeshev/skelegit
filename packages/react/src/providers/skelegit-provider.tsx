@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode } from 'react';
+import { createContext, useContext, ReactNode } from 'react';
 import { GitClient } from '@skelegit/core';
 
 interface SkelegitContextValue {
@@ -7,7 +7,9 @@ interface SkelegitContextValue {
   getClient: (name?: string) => GitClient | undefined;
 }
 
-const SkelegitContext = createContext<SkelegitContextValue | undefined>(undefined);
+const SkelegitContext = createContext<SkelegitContextValue | undefined>(
+  undefined
+);
 
 export interface SkelegitProviderProps {
   children: ReactNode;
@@ -15,10 +17,10 @@ export interface SkelegitProviderProps {
   defaultClient?: string;
 }
 
-export function SkelegitProvider({ 
-  children, 
-  clients, 
-  defaultClient 
+export function SkelegitProvider({
+  children,
+  clients,
+  defaultClient,
 }: SkelegitProviderProps) {
   const getClient = (name?: string): GitClient | undefined => {
     if (name) {

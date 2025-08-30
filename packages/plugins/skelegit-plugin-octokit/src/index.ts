@@ -1,14 +1,14 @@
 import { Effect } from 'effect';
 import { Octokit } from '@octokit/rest';
-import { 
-  GitClientPlugin, 
-  GitClientConfig, 
+import {
+  GitClientPlugin,
+  GitClientConfig,
   GitClient,
   Repository,
   PullRequest,
   GitFile,
   Branch,
-  Commit
+  Commit,
 } from '@skelegit/core';
 
 export class OctokitClient implements GitClient {
@@ -29,7 +29,7 @@ export class OctokitClient implements GitClient {
           owner,
           repo,
         });
-        
+
         return {
           id: data.id.toString(),
           name: data.name,
@@ -50,28 +50,32 @@ export class OctokitClient implements GitClient {
   listRepositories(owner?: string): Effect.Effect<Repository[], Error> {
     return Effect.tryPromise({
       try: async () => {
-        const { data } = owner 
+        const { data } = owner
           ? await this.octokit.rest.repos.listForUser({ username: owner })
           : await this.octokit.rest.repos.listForAuthenticatedUser();
-        
-        return data.map(repo => ({
+
+        return data.map((repo) => ({
           id: repo.id.toString(),
           name: repo.name,
           fullName: repo.full_name,
           description: repo.description || undefined,
-          defaultBranch: repo.default_branch,
+          defaultBranch: repo.default_branch || 'main',
           isPrivate: repo.private,
           url: repo.html_url,
-          cloneUrl: repo.clone_url,
-          createdAt: new Date(repo.created_at),
-          updatedAt: new Date(repo.updated_at),
+          cloneUrl: repo.clone_url || '',
+          createdAt: new Date(repo.created_at || ''),
+          updatedAt: new Date(repo.updated_at || ''),
         }));
       },
       catch: (error) => new Error(`Failed to list repositories: ${error}`),
     });
   }
 
-  getPullRequest(owner: string, repo: string, number: number): Effect.Effect<PullRequest, Error> {
+  getPullRequest(
+    owner: string,
+    repo: string,
+    number: number
+  ): Effect.Effect<PullRequest, Error> {
     return Effect.tryPromise({
       try: async () => {
         const { data } = await this.octokit.rest.pulls.get({
@@ -79,7 +83,7 @@ export class OctokitClient implements GitClient {
           repo,
           pull_number: number,
         });
-        
+
         return {
           id: data.id.toString(),
           number: data.number,
@@ -104,7 +108,11 @@ export class OctokitClient implements GitClient {
     });
   }
 
-  listPullRequests(owner: string, repo: string, state: 'open' | 'closed' | 'all' = 'open'): Effect.Effect<PullRequest[], Error> {
+  listPullRequests(
+    owner: string,
+    repo: string,
+    state: 'open' | 'closed' | 'all' = 'open'
+  ): Effect.Effect<PullRequest[], Error> {
     return Effect.tryPromise({
       try: async () => {
         const { data } = await this.octokit.rest.pulls.list({
@@ -112,8 +120,8 @@ export class OctokitClient implements GitClient {
           repo,
           state,
         });
-        
-        return data.map(pr => ({
+
+        return data.map((pr) => ({
           id: pr.id.toString(),
           number: pr.number,
           title: pr.title,
@@ -137,7 +145,12 @@ export class OctokitClient implements GitClient {
     });
   }
 
-  getFile(owner: string, repo: string, path: string, ref?: string): Effect.Effect<GitFile, Error> {
+  getFile(
+    owner: string,
+    repo: string,
+    path: string,
+    ref?: string
+  ): Effect.Effect<GitFile, Error> {
     return Effect.tryPromise({
       try: async () => {
         const { data } = await this.octokit.rest.repos.getContent({
@@ -146,21 +159,23 @@ export class OctokitClient implements GitClient {
           path,
           ref,
         });
-        
+
         if (Array.isArray(data)) {
           throw new Error('Path is a directory, not a file');
         }
-        
+
         if (data.type !== 'file') {
           throw new Error('Path is not a file');
         }
-        
+
         return {
           path: data.path,
           name: data.name,
           type: 'file' as const,
           size: data.size,
-          content: data.content ? Buffer.from(data.content, 'base64').toString() : undefined,
+          content: data.content
+            ? (globalThis as any).Buffer.from(data.content, 'base64').toString()
+            : undefined,
           sha: data.sha,
         };
       },
@@ -168,7 +183,12 @@ export class OctokitClient implements GitClient {
     });
   }
 
-  listFiles(owner: string, repo: string, path: string = '', ref?: string): Effect.Effect<GitFile[], Error> {
+  listFiles(
+    owner: string,
+    repo: string,
+    path: string = '',
+    ref?: string
+  ): Effect.Effect<GitFile[], Error> {
     return Effect.tryPromise({
       try: async () => {
         const { data } = await this.octokit.rest.repos.getContent({
@@ -177,21 +197,27 @@ export class OctokitClient implements GitClient {
           path,
           ref,
         });
-        
+
         if (!Array.isArray(data)) {
-          return [data].map(item => ({
+          return [data].map((item) => ({
             path: item.path,
             name: item.name,
-            type: item.type === 'dir' ? 'directory' as const : 'file' as const,
+            type:
+              (item as any).type === 'dir'
+                ? ('directory' as const)
+                : ('file' as const),
             size: item.size,
             sha: item.sha,
           }));
         }
-        
-        return data.map(item => ({
+
+        return data.map((item) => ({
           path: item.path,
           name: item.name,
-          type: item.type === 'dir' ? 'directory' as const : 'file' as const,
+          type:
+            (item as any).type === 'dir'
+              ? ('directory' as const)
+              : ('file' as const),
           size: item.size,
           sha: item.sha,
         }));
@@ -200,7 +226,11 @@ export class OctokitClient implements GitClient {
     });
   }
 
-  getBranch(owner: string, repo: string, branch: string): Effect.Effect<Branch, Error> {
+  getBranch(
+    owner: string,
+    repo: string,
+    branch: string
+  ): Effect.Effect<Branch, Error> {
     return Effect.tryPromise({
       try: async () => {
         const { data } = await this.octokit.rest.repos.getBranch({
@@ -208,7 +238,7 @@ export class OctokitClient implements GitClient {
           repo,
           branch,
         });
-        
+
         return {
           name: data.name,
           sha: data.commit.sha,
@@ -227,8 +257,8 @@ export class OctokitClient implements GitClient {
           owner,
           repo,
         });
-        
-        return data.map(branch => ({
+
+        return data.map((branch) => ({
           name: branch.name,
           sha: branch.commit.sha,
           isDefault: false, // TODO: Get from repository info
@@ -239,7 +269,11 @@ export class OctokitClient implements GitClient {
     });
   }
 
-  getCommit(owner: string, repo: string, sha: string): Effect.Effect<Commit, Error> {
+  getCommit(
+    owner: string,
+    repo: string,
+    sha: string
+  ): Effect.Effect<Commit, Error> {
     return Effect.tryPromise({
       try: async () => {
         const { data } = await this.octokit.rest.repos.getCommit({
@@ -247,7 +281,7 @@ export class OctokitClient implements GitClient {
           repo,
           ref: sha,
         });
-        
+
         return {
           sha: data.sha,
           message: data.commit.message,
@@ -267,14 +301,18 @@ export class OctokitClient implements GitClient {
           },
           createdAt: new Date(data.commit.author?.date || ''),
           url: data.html_url,
-          parents: data.parents.map(p => p.sha),
+          parents: data.parents.map((p) => p.sha),
         };
       },
       catch: (error) => new Error(`Failed to get commit: ${error}`),
     });
   }
 
-  listCommits(owner: string, repo: string, ref?: string): Effect.Effect<Commit[], Error> {
+  listCommits(
+    owner: string,
+    repo: string,
+    ref?: string
+  ): Effect.Effect<Commit[], Error> {
     return Effect.tryPromise({
       try: async () => {
         const { data } = await this.octokit.rest.repos.listCommits({
@@ -282,8 +320,8 @@ export class OctokitClient implements GitClient {
           repo,
           sha: ref,
         });
-        
-        return data.map(commit => ({
+
+        return data.map((commit) => ({
           sha: commit.sha,
           message: commit.commit.message,
           author: {
@@ -302,7 +340,7 @@ export class OctokitClient implements GitClient {
           },
           createdAt: new Date(commit.commit.author?.date || ''),
           url: commit.html_url,
-          parents: commit.parents.map(p => p.sha),
+          parents: commit.parents.map((p) => p.sha),
         }));
       },
       catch: (error) => new Error(`Failed to list commits: ${error}`),
@@ -313,6 +351,6 @@ export class OctokitClient implements GitClient {
 export const octokitPlugin: GitClientPlugin = {
   name: 'octokit',
   provider: 'github',
-  createClient: (config: GitClientConfig) => 
+  createClient: (config: GitClientConfig) =>
     Effect.succeed(new OctokitClient(config)),
 };

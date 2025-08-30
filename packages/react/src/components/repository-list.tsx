@@ -1,4 +1,3 @@
-import React from 'react';
 import { useRepositories } from '../hooks/use-repository';
 import { Repository } from '@skelegit/core';
 
@@ -9,11 +8,11 @@ export interface RepositoryListProps {
   className?: string;
 }
 
-export function RepositoryList({ 
-  owner, 
-  clientName, 
+export function RepositoryList({
+  owner,
+  clientName,
   onRepositorySelect,
-  className = ''
+  className = '',
 }: RepositoryListProps) {
   const { repositories, loading, error } = useRepositories(owner, clientName);
 
@@ -44,9 +43,7 @@ export function RepositoryList({
             <p className="text-gray-600 mt-1">{repository.description}</p>
           )}
           <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
-            <span>
-              {repository.isPrivate ? '🔒 Private' : '🌐 Public'}
-            </span>
+            <span>{repository.isPrivate ? '🔒 Private' : '🌐 Public'}</span>
             <span>Branch: {repository.defaultBranch}</span>
             <span>Updated: {repository.updatedAt.toLocaleDateString()}</span>
           </div>

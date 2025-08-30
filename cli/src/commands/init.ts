@@ -1,6 +1,4 @@
 import { Effect } from 'effect';
-import { render } from 'ink';
-import React from 'react';
 
 interface InitOptions {
   template: string;
@@ -20,6 +18,6 @@ export async function initCommand(options: InitOptions) {
     console.log(result);
   } catch (error) {
     console.error('Failed to initialize project:', error);
-    process.exit(1);
+    (globalThis as any).process.exit(1);
   }
 }
