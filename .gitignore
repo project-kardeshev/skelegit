@@ -115,6 +115,13 @@ playwright/.cache/
 
 # RSPress
 .rspress/
+docs/.rspress/
+**/docs/.rspress/
+docs/dist/
+**/docs/dist/
+doc_build/
+docs/doc_build/
+**/doc_build/
 
 # Effect
 .effect/
